@@ -1,0 +1,170 @@
+{% extends 'my_app/base.html' %}
+{% load static %}
+{% block body_block %}
+
+  <br><br><br>
+<div class="row">
+  <div class="col-lg-6">
+    <div class="product-box"><br>
+      <form id="form" style="background-color: lightgrey;">
+        <div id="user-info">
+          <div class="form-field">
+            <input required class="form-control" type="text" name="name" placeholder="Name...">
+          </div>
+          <hr>
+          <div class="form-field">
+            <input required class="form-control" type="email" name="email" placeholder="Email...">
+          </div>
+          </div>
+          <hr style="border: 1px solid white;">
+          <div id="shipping-info">
+            <hr>
+            <p>Shipping Information: </p>
+            <hr>
+            <div class="form-field text-white">
+              <input type="text" name="address" placeholder="Address..">
+            </div><br>
+            <div class="form-field">
+              <input type="text" name="city" placeholder="City..">
+            </div><br>
+            <div class="form-field">
+              <input type="text" name="state" placeholder="State..">
+            </div><br>
+            <div class="form-field">
+              <input type="text" name="zipcode" placeholder="Zip Code..">
+            </div><br>
+            <div class="form-field">
+              <input type="text" name="country" placeholder="Country..">
+            </div><br>
+        </div>
+        <hr style="border: 1px solid white;">
+        <input id="form-button" class="btn btn-success btn-block" type="submit" value="Continue">
+      </form>
+    </div>
+
+  <hr style="border: 1px solid white;">
+    <div id="payment-info" class="hidden">
+      <small>PayPal Options</small>
+      <div id="paypal-button-container"></div>
+    </div>
+  </div>
+    <br>
+  <div class="col-lg-6">
+        <div class="product-box"><br>
+          <a class="btn btn-outline-dark" href="{% url 'my_app:cart' %}">&#x2190; Back to Cart</a>
+          <hr>
+          <h3>Order Summary</h3>
+          <hr>
+          {% for product in products %}
+          <div class="row">
+            <div style="flex:2;"><img src="{{ product.item.imageURL}}" width="58" height="41"></div>
+            <div style="flex:2;"><strong>{{ product.item.name }}</strong></div>
+            <div style="flex:1;"><strong>${{ product.item.price }}</strong></div>
+            <div style="flex:1;"><strong>{{ product.quantity }}</strong></div>
+          </div>
+          {% endfor %}
+          <br>
+          <hr style="border: 1px solid white;">
+          <h5>Items:  {{ order.get_cart_items}}</h5>
+          <h5>Total:  ${{ order.get_cart_total}}</h5>
+        </div>
+    </div>
+  </div>
+
+  <br><br><br>
+
+  <script src="https://www.paypal.com/sdk/js?client-id=Ab0CRUVGbui1i49KXyAAPBTxbm4E3DR6VnfKypDr9Xy9yhjPi7AXFfOBkSMn2_NsAO8aii1dXeD1oNxk&currency=USD&disable-funding=credit"></script>
+
+  <script>
+        // Render the PayPal button into #paypal-button-container
+        var total = '{{ order.get_cart_total }}'
+        paypal.Buttons({
+            // Set up the transaction
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: parseFloat(total).toFixed(2)
+                        }
+                    }]
+                });
+            },
+            // Finalize the transaction
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                    // Show a success message to the buyer
+                    submitFormData()
+                });
+            }
+        }).render('#paypal-button-container');
+    </script>
+ <script type="text/javascript">
+
+        var shipping = '{{ order.shipping }}'
+
+        if (shipping == 'False'){
+          document.getElementById('shipping-info').innerHTML = ''
+        }
+        var form = document.getElementById('form')
+
+        if (user != 'AnonymousUser'){
+          document.getElementById('user-info').innerHTML = ''
+        }
+
+        if (shipping == 'False' && user != 'AnonymousUser'){
+          document.getElementById('form-button').classList.add("hidden");
+          document.getElementById('payment-info').classList.remove("hidden");
+        }
+
+        form.addEventListener("submit", function(e){
+            e.preventDefault()
+            console.log('Form submitted..')
+            document.getElementById('form-button').classList.add("hidden");
+            document.getElementById('payment-info').classList.remove("hidden");
+            })
+
+        function submitFormData(){
+          console.log('Payment button clicked')
+
+          var userFormData = {
+            'name':null,
+            'email':null,
+            'total':total,
+          }
+          var shippingInfo = {
+            'address':null,
+            'city':null,
+            'state':null,
+            'zipcode':null,
+          }
+          if (shipping == 'True'){
+            shippingInfo.address = form.address.value
+            shippingInfo.city = form.city.value
+            shippingInfo.state = form.state.value
+            shippingInfo.zipcode = form.zipcode.value
+          }
+          if (user == 'AnonymousUser'){
+            userFormData.name = form.name.value
+            userFormData.email = form.email.value
+          }
+
+          var url = 'process_order/'
+          fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrftoken,
+            },
+            body:JSON.stringify({'form': userFormData, 'shipping':shippingInfo})
+          })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log('Success:', data);
+            alert('Transaction completed');
+            cart = {}
+            document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
+            window.location.href = "{% url 'index' %}"
+          })
+        }
+</script>
+{% endblock body_block %}

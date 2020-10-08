@@ -1,0 +1,53 @@
+{% extends 'my_app/base.html' %}
+{% load static %}
+{% block body_block %}
+<!-- First Jumbotron !-->
+        <div class="container">
+          <div id='first_jumbo' class="jumbotron">
+            <h1 class="display-4 text-center text-dark">OUR NEW ARRIVAL ARE HERE</h1>
+            <p class="lead text-center text-dark">Welcome to Brevanh Accessorries. Our great selection of products will cover all of your needs, whatever and wherever they may be. Enjoy our exceptional shopping experience and contact our customer service with questions or comments.</p>
+            <hr class="my-4">
+            <p class="text-center"><a class="btn btn-link btn-warning btn-lg text-white" href="{% url 'my_app:shop' %}" role="button">Shop Now</a></p>
+          </div>
+
+        </div>
+    <div class="container text-center">
+      <div class="row">
+        <div class="col-sm-6">
+          <div id='about_us' class="card">
+          <div class="card-body">
+        <h5 class="card-title text-dark">ABOUT US</h5>
+        <p class="card">We founded Brevanh Accessorries with one goal in mind: providing a high-quality, smart, and reliable online store. Our passion for excellence has driven us from the beginning, and continues to drive us into the future. We know that every product counts, and strive to make the entire shopping experience as rewarding as possible. Check it out for yourself!</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div id='second_jumbo' class="card">
+      <div class="card-body">
+        <img src="{% static "images/pictures/Silver chain.PNG" %}" width="500" height="470" alt="Not found!">
+      </div>
+    </div>
+  </div>
+</div>
+    </div>
+  <!-- This is Note section !-->
+    <div class="container">
+      <div id='note'class="jumbotron jumbotron-fluid" style="background-color: lightgrey;">
+          <div>
+          <h1 class="display-6 text-center text-dark">SEND US A NOTE</h1>
+          <p class="text-center text-dark">USA<br><a href="https://www.gmail.com">
+              info@brevanh.com<br></a>
+              330-685-9171<br>
+          </p>
+        </div>
+        </div>
+      </div>
+<!-- This is subscribe form !-->
+    <div class="container text-center"><br>
+      <form id='form'class="subscribe" style="background-color: lightgrey;">
+        <p class="text-dark">Subscribe Form</p>
+        <input id='size' type="email" name="" placeholder="Email Address"><br><br>
+        <input id='size' type="submit" name="" value="Submit">
+      </form>
+      </div>
+{% endblock %}

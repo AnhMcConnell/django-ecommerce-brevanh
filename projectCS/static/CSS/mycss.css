@@ -1,0 +1,23 @@
+
+#first_jumbo {
+  color: black;
+}
+
+#bag{
+  background-image: url("static/images/pictures/bag.jpg");
+  color: black;
+}
+#note {
+  color: black;
+}
+
+.quantity {
+  display: inline-block;
+  padding-right: 8px;
+}
+.chg-quan {
+  cursor: pointer;
+  display: block;
+  margin-top: 5px;
+  transition: .1s;
+}
